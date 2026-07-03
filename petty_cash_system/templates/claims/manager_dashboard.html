@@ -1,0 +1,37 @@
+{% extends 'claims/base.html' %}
+{% block content %}
+<h2>Manager Approval Dashboard</h2>
+<h4 class="mt-4 text-warning">Claims Pending Your Approval</h4>
+
+<table class="table table-bordered bg-white">
+    <thead class="table-dark">
+        <tr>
+            <th>Employee</th><th>Title</th><th>Amount</th><th>Description</th><th>Receipt</th><th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for claim in pending_claims %}
+        <tr>
+            <td>{{ claim.employee.username }}</td>
+            <td>{{ claim.title }}</td>
+            <td>${{ claim.amount }}</td>
+            <td>{{ claim.description }}</td>
+            <td><a href="{{ claim.receipt.url }}" target="_blank" class="btn btn-sm btn-outline-secondary">View Receipt</a></td>
+            <td>
+                <form method="post" action="{% url 'manager_action' claim.id 'approve' %}" class="d-inline">
+                    {% csrf_token %}
+                    <input type="text" name="remarks" placeholder="Remarks" class="form-control form-control-sm mb-1" required>
+                    <button type="submit" class="btn btn-sm btn-success w-100 mb-1">Approve</button>
+                </form>
+                <form method="post" action="{% url 'manager_action' claim.id 'reject' %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-danger w-100">Reject</button>
+                </form>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6" class="text-center text-muted">No pending claims for approval.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

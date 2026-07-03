@@ -1,0 +1,61 @@
+{% extends 'claims/base.html' %}
+{% block content %}
+<h2>Finance Settlement Dashboard</h2>
+
+<h4 class="mt-4 text-primary">Pending Finance Verification</h4>
+<table class="table table-bordered bg-white mb-5">
+    <thead class="table-dark">
+        <tr>
+            <th>Employee</th><th>Title</th><th>Amount</th><th>Receipt</th><th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for claim in pending_finance %}
+        <tr>
+            <td>{{ claim.employee.username }}</td>
+            <td>{{ claim.title }}</td>
+            <td>${{ claim.amount }}</td>
+            <td><a href="{{ claim.receipt.url }}" target="_blank">View</a></td>
+            <td>
+                <form method="post" action="{% url 'finance_action' claim.id 'approve' %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-success">Verify & Approve</button>
+                </form>
+                <form method="post" action="{% url 'finance_action' claim.id 'reject' %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-danger">Reject</button>
+                </form>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" class="text-center text-muted">No claims pending finance verification.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h4 class="text-success">Approved Claims Waiting for Payment</h4>
+<table class="table table-bordered bg-white">
+    <thead class="table-dark">
+        <tr>
+            <th>Employee</th><th>Title</th><th>Amount</th><th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for claim in waiting_payment %}
+        <tr>
+            <td>{{ claim.employee.username }}</td>
+            <td>{{ claim.title }}</td>
+            <td>${{ claim.amount }}</td>
+            <td>
+                <form method="post" action="{% url 'finance_action' claim.id 'pay' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-primary">Mark as Paid</button>
+                </form>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4" class="text-center text-muted">No claims waiting for disbursement.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'claims/base.html' %}
+{% block content %}
+<h2>Employee Dashboard</h2>
+<a href="{% url 'submit_claim' %}" class="btn btn-primary mb-3">Submit New Claim</a>
+
+<div class="row mb-4">
+    <div class="col-md-3"><div class="card bg-info text-white p-3"><h5>Total: {{ total }}</h5></div></div>
+    <div class="col-md-3"><div class="card bg-warning text-dark p-3"><h5>Pending: {{ pending }}</h5></div></div>
+    <div class="col-md-3"><div class="card bg-success text-white p-3"><h5>Paid: {{ paid }}</h5></div></div>
+</div>
+
+<h4>Your Recent Claims</h4>
+<table class="table table-striped table-bordered bg-white">
+    <thead class="table-dark">
+        <tr>
+            <th>Title</th><th>Category</th><th>Amount</th><th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for claim in claims %}
+        <tr>
+            <td>{{ claim.title }}</td>
+            <td>{{ claim.category }}</td>
+            <td>${{ claim.amount }}</td>
+            <td><span class="badge bg-secondary">{{ claim.status }}</span></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
